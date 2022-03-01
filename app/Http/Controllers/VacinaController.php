@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VacinaRequest;
 use Illuminate\Http\Request;
 use App\Models\ModelVacina;
 use App\Models\ModelPaciente;
@@ -16,8 +17,8 @@ class VacinaController extends Controller
      */
     public function index()
     {
-        $vacina = ModelVacina::all()->sortByDesc('data_da_vacina');
-        return view('vacina_index',compact('vacina'));
+        $vacina = ModelVacina::orderByDesc('created_at')->paginate(10);
+        return view('vacina_index', compact('vacina'));
     }
 
     /**
@@ -27,8 +28,9 @@ class VacinaController extends Controller
      */
     public function create(ModelPaciente $paciente)
     {
-        $lotes=ModelLote::all();
-        return view('vacina_create',compact('paciente','lotes'));
+        $lotes = ModelLote::all();
+        $dose = ["D1", "D2", "D3", "D4"];
+        return view('vacina_create', compact('paciente', 'lotes', 'dose'));
     }
 
     /**
@@ -37,18 +39,27 @@ class VacinaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(VacinaRequest $request)
     {
-        $cadVac=ModelVacina::create([
-            'id_paciente'=>$request->id_paciente,
-            'id_lote'=>$request->id_lote,
-            'data_da_vacina'=>$request->data_da_vacina,
-            'dose'=>$request->dose,
-            'vacinador'=>$request->vacinador,
-            'unidade_de_vacinacao'=>$request->unidade_de_vacinacao,
+
+        /*$dosesPaciente = ModelPaciente::find($request->id_paciente)->relVacinas;
+
+        foreach ($dosesPaciente as $vacina) {
+            if ($vacina->dose === $request->dose) {
+                return false;
+            }
+        }*/
+
+        $cadVac = ModelVacina::create([
+            'id_paciente' => $request->id_paciente,
+            'id_lote' => $request->id_lote,
+            'data_da_vacina' => $request->data_da_vacina,
+            'dose' => $request->dose,
+            'vacinador' => $request->vacinador,
+            'unidade_de_vacinacao' => $request->unidade_de_vacinacao,
         ]);
-        if($cadVac){
-            return redirect('pacientes/'.$request->id_paciente);
+        if ($cadVac) {
+            return redirect('pacientes/' . $request->id_paciente);
         }
     }
 
@@ -71,9 +82,10 @@ class VacinaController extends Controller
      */
     public function edit($id)
     {
-        $vacina=ModelVacina::find($id);
-        $lotes=ModelLote::all();
-        return view('vacina_create',compact('vacina','lotes'));
+        $vacina = ModelVacina::find($id);
+        $lotes = ModelLote::all();
+        $dose = ["D1", "D2", "D3", "D4"];
+        return view('vacina_create', compact('vacina', 'lotes', 'dose'));
     }
 
     /**
@@ -83,17 +95,17 @@ class VacinaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(VacinaRequest $request, $id)
     {
-        ModelVacina::where(['id'=>$id])->update([
-            'id_paciente'=>$request->id_paciente,
-            'id_lote'=>$request->id_lote,
-            'data_da_vacina'=>$request->data_da_vacina,
-            'dose'=>$request->dose,
-            'vacinador'=>$request->vacinador,
-            'unidade_de_vacinacao'=>$request->unidade_de_vacinacao,
+        ModelVacina::where(['id' => $id])->update([
+            'id_paciente' => $request->id_paciente,
+            'id_lote' => $request->id_lote,
+            'data_da_vacina' => $request->data_da_vacina,
+            'dose' => $request->dose,
+            'vacinador' => $request->vacinador,
+            'unidade_de_vacinacao' => $request->unidade_de_vacinacao,
         ]);
-        return redirect('pacientes/'.$request->id_paciente);
+        return redirect('pacientes/' . $request->id_paciente);
     }
 
     /**
@@ -104,7 +116,7 @@ class VacinaController extends Controller
      */
     public function destroy($id)
     {
-        $del=ModelVacina::destroy($id);
-        return($del)?'sim':'não';
+        $del = ModelVacina::destroy($id);
+        return ($del) ? 'sim' : 'não';
     }
 }

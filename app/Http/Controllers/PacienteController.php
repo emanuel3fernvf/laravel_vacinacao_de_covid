@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PacienteRequest;
 use Illuminate\Http\Request;
 use App\Models\ModelPaciente;
+use App\Models\ModelVacina;
 
 class PacienteController extends Controller
 {
@@ -14,8 +16,8 @@ class PacienteController extends Controller
      */
     public function index()
     {
-        $paciente = ModelPaciente::all()->sortByDesc('created_at');
-        return view('paciente_index',compact('paciente'));
+        $paciente = ModelPaciente::orderByDesc('created_at')->paginate(10);
+        return view('paciente_index', compact('paciente'));
     }
 
     /**
@@ -25,8 +27,8 @@ class PacienteController extends Controller
      */
     public function create()
     {
-        $sexo=["M","F"];
-        return view('paciente_create',compact('sexo'));
+        $sexo = ["M", "F"];
+        return view('paciente_create', compact('sexo'));
     }
 
     /**
@@ -35,19 +37,37 @@ class PacienteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PacienteRequest $request)
     {
-        $cadPac=ModelPaciente::create([
-            'name'=>$request->name,
-            'cpf'=>$request->cpf,
-            'cns'=>$request->cns,
-            'data_nascimento'=>$request->data_nascimento,
-            'sexo'=>$request->sexo,
-            'nome_da_mae'=>$request->nome_da_mae,
-            'grupo_prioritário'=>$request->grupo_prioritário,
-            'categoria_grupo_prioritario'=>$request->categoria_grupo_prioritario,
+
+        $cns = '';
+        $cpf = '';
+
+        for ($i = 0; $i < strlen($request->cns); $i++) {
+            if (strrpos('1234567890', substr($request->cns, $i, 1)) !== false) {
+                $cns = $cns . substr($request->cns, $i, 1);
+            }
+        }
+
+        for ($i = 0; $i < strlen($request->cpf); $i++) {
+            if (strrpos('1234567890', substr($request->cpf, $i, 1)) !== false) {
+                $cpf = $cpf . substr($request->cpf, $i, 1);
+            }
+        }
+
+        $cpf = substr_replace(substr_replace(substr_replace($cpf, '.', 3, 0), '.', 7, 0), '-', 11, 0);
+
+        $cadPac = ModelPaciente::create([
+            'name' => $request->name,
+            'cpf' => $cpf,
+            'cns' => $cns,
+            'data_nascimento' => $request->data_nascimento,
+            'sexo' => $request->sexo,
+            'nome_da_mae' => $request->nome_da_mae,
+            'grupo_prioritário' => $request->grupo_prioritário,
+            'categoria_grupo_prioritario' => $request->categoria_grupo_prioritario,
         ]);
-        if($cadPac){
+        if ($cadPac) {
             return redirect('pacientes');
         }
     }
@@ -60,9 +80,9 @@ class PacienteController extends Controller
      */
     public function show($id)
     {
-        $paciente=ModelPaciente::find($id);
-        $vacina=ModelPaciente::find($id)->relVacinas;
-        return view('vacina_index',compact('paciente','vacina'));
+        $paciente = ModelPaciente::find($id);
+        $vacina = ModelVacina::where('id_paciente', $id)->paginate(10);
+        return view('vacina_index', compact('paciente', 'vacina'));
     }
 
     /**
@@ -73,9 +93,9 @@ class PacienteController extends Controller
      */
     public function edit($id)
     {
-        $paciente=ModelPaciente::find($id);
-        $sexo=["M","F"];
-        return view('paciente_create',compact('paciente','sexo'));
+        $paciente = ModelPaciente::find($id);
+        $sexo = ["M", "F"];
+        return view('paciente_create', compact('paciente', 'sexo'));
     }
 
     /**
@@ -85,17 +105,35 @@ class PacienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PacienteRequest $request, $id)
     {
-        ModelPaciente::where(['id'=>$id])->update([
-            'name'=>$request->name,
-            'cpf'=>$request->cpf,
-            'cns'=>$request->cns,
-            'data_nascimento'=>$request->data_nascimento,
-            'sexo'=>$request->sexo,
-            'nome_da_mae'=>$request->nome_da_mae,
-            'grupo_prioritário'=>$request->grupo_prioritário,
-            'categoria_grupo_prioritario'=>$request->categoria_grupo_prioritario,
+
+        $cns = '';
+        $cpf = '';
+
+        for ($i = 0; $i < strlen($request->cns); $i++) {
+            if (strrpos('1234567890', substr($request->cns, $i, 1)) !== false) {
+                $cns = $cns . substr($request->cns, $i, 1);
+            }
+        }
+
+        for ($i = 0; $i < strlen($request->cpf); $i++) {
+            if (strrpos('1234567890', substr($request->cpf, $i, 1)) !== false) {
+                $cpf = $cpf . substr($request->cpf, $i, 1);
+            }
+        }
+
+        $cpf = substr_replace(substr_replace(substr_replace($cpf, '.', 3, 0), '.', 7, 0), '-', 11, 0);
+
+        ModelPaciente::where(['id' => $id])->update([
+            'name' => $request->name,
+            'cpf' => $cpf,
+            'cns' => $cns,
+            'data_nascimento' => $request->data_nascimento,
+            'sexo' => $request->sexo,
+            'nome_da_mae' => $request->nome_da_mae,
+            'grupo_prioritário' => $request->grupo_prioritário,
+            'categoria_grupo_prioritario' => $request->categoria_grupo_prioritario,
         ]);
         return redirect('pacientes');
     }
@@ -108,7 +146,7 @@ class PacienteController extends Controller
      */
     public function destroy($id)
     {
-        $del=ModelPaciente::destroy($id);
-        return($del)?'sim':'não';
+        $del = ModelPaciente::destroy($id);
+        return ($del) ? 'sim' : 'não';
     }
 }

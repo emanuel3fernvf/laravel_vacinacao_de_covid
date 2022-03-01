@@ -1,6 +1,11 @@
 @extends('templates.template')
 
 @section('content')
+
+    <script>
+        document.getElementById("pacienteLink").classList.toggle("btn-dark");
+    </script>
+
     <div class="col-10 m-auto">
         <form class="row g-3 m-auto" name="formSearch" id="formSearch" method="get" action="">
             <div class="p-0">
@@ -8,7 +13,7 @@
                     <input type="button" class="btn btn-primary" value="Cadastrar novo paciente">
                 </a>
             </div>
-            <table class="table shadow mb-5">
+            <table class="table table-sm table-bordered align-middle table-hover shadow mb-5">
                 <thead>
                 <tr>
                     <th scope="col">Nome</th>
@@ -41,8 +46,18 @@
                     </tr>
                 @endforeach
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7">
+                            @if (isset($filters))
+                                {{ $paciente->appends($filters)->links("pagination::bootstrap-5") }}
+                            @else
+                                {{ $paciente->links("pagination::bootstrap-5") }}
+                            @endif
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
-
         </form>
 
     </div>

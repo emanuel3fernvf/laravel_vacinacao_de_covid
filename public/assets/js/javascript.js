@@ -39,5 +39,27 @@ function confirmDelVac(event) {
     }
 }
 
+function confirmDelLot(event) {
+    event.preventDefault();
+    //console.log(event.target.parentNode.href);
+    let token = document.getElementsByName("_token")[0].value;
+    if (confirm("Deseja mesmo apagar este lote?")) {
+        let ajax = new XMLHttpRequest();
+        ajax.open("DELETE", event.target.parentNode.href);
+        ajax.setRequestHeader('X-CSRF-TOKEN', token);
+        ajax.onreadystatechange = function () {
+            if (ajax.readyState === 4 && ajax.status === 200) {
+                var index = window.location.href.indexOf("lotes");
+                window.location.href = window.location.href.substring(0, index + 5);
+            }
+        };
+        ajax.send();
+    } else {
+        return false;
+    }
+}
+
+
+
 
 

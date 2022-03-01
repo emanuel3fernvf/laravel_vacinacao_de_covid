@@ -1,6 +1,11 @@
 @extends('templates.template')
 
 @section('content')
+
+    <script>
+        document.getElementById("pacienteLink").classList.toggle("btn-dark");
+    </script>
+
     <div class="col-8 m-auto mt-3 mb-5 shadow shadow-lg p-3">
         <h4>@if(isset($paciente)) Editar paciente @else Cadastro de novo paciente @endif</h4>
         @if(isset($paciente))
@@ -12,11 +17,21 @@
             @csrf
             <div class="col-md-12">
                 <label for="name" class="form-label">Nome:</label>
-                <input class="form-control m-auto" type="text" name="name" id="name" placeholder="Digite o nome:" value="{{$paciente->name ?? ''}}" required>
+                <input class="form-control m-auto @error('name') is-invalid @enderror" type="text" name="name" id="name" placeholder="Digite o nome:" value="{{$paciente->name ?? ''}}" required>
+                @error('name')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror
             </div>
             <div class="col-md-6">
                 <label for="cpf" class="form-label">CPF:</label>
-                <input class="form-control m-auto" type="text" name="cpf" id="cpf" placeholder="Digite o CPF:" value="{{$paciente->cpf ?? ''}}" required>
+                <input class="form-control m-auto @error('cpf') is-invalid @enderror" type="text" name="cpf" id="cpf" placeholder="Digite o CPF:" value="{{$paciente->cpf ?? ''}}" required>
+                @error('cpf')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror
             </div>
             <div class="col-md-6">
                 <label for="cns" class="form-label">CNS:</label>

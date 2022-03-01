@@ -2,6 +2,10 @@
 
 @section('content')
 
+    <script>
+        document.getElementById("vacinaLink").classList.toggle("btn-dark");
+    </script>
+
     <div class="col-8 m-auto mt-3 mb-5 shadow shadow-lg p-3">
 
 
@@ -22,8 +26,7 @@
                     <div class="me-2 bd-highlight">{{$paciente->name}}</div>
                 </div>
                 <div class="d-flex flex-row bd-highlight">
-                    <div class="me-2 bd-highlight"><b>CPF: </b></div><div class="me-2 bd-highlight">
-                        {{$paciente->cpf}}</div>
+                    <div class="me-2 bd-highlight"><b>CPF: </b></div><div class="me-2 bd-highlight">{{$paciente->cpf}}</div>
                     <div class="me-2 bd-highlight"><b>CNS: </b></div><div class="me-2 bd-highlight">{{$paciente->cns}}</div>
                 </div>
                 <div class="d-flex flex-row bd-highlight">
@@ -66,11 +69,21 @@
             </div>
             <div class="col-md-6">
                 <label for="data_da_vacina" class="form-label">Data:</label>
-                <input class="form-control m-auto" type="datetime-local" name="data_da_vacina" id="data_da_vacina" placeholder="Digite a data:" value="{{isset($vacina->data_da_vacina) ? str_replace('UTC','T',date('Y-m-dTh:m',strtotime($vacina->data_da_vacina))) : ''}}" required>
+                <input class="form-control m-auto" type="date" name="data_da_vacina" id="data_da_vacina" placeholder="Digite a data:" value="{{isset($vacina->data_da_vacina) ? date('Y-m-d',strtotime($vacina->data_da_vacina)) : ''}}" required>
             </div>
             <div class="col-md-6">
                 <label for="dose" class="form-label">Dose:</label>
-                <input class="form-control m-auto" type="text" name="dose" id="dose" placeholder="Selecione a dose:" value="{{$vacina->dose ?? ''}}" required>
+                <select class="form-control m-auto @error('dose') is-invalid @enderror" type="text" name="dose" id="dose" placeholder="Selecione a dose:" value="{{$vacina->dose ?? ''}}" required>
+                <option value="{{$vacina->dose ?? ''}}">{{$vacina->dose ?? ''}}</option>
+                    @foreach($dose as $doses)
+                        <option value="{{$doses}}">{{$doses}}</option>
+                    @endforeach
+                </select>
+                @error('dose')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror
             </div>
             <div class="col-md-6">
                 <label for="vacinador" class="form-label">Vacinador:</label>

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\PesquisaController;
 use App\Http\Controllers\VacinaController;
 
 /*
@@ -20,5 +21,9 @@ Route::resources([
     'lotes' => LoteController::class,
     'pacientes' => PacienteController::class,
     'vacinas' => VacinaController::class,
-    'pacientes.vacinas' => VacinaController::class
+    'pacientes.vacinas' => VacinaController::class,
+
 ]);
+
+Route::any('pesquisa_pacientes', [PesquisaController::class, 'searchPaciente']);
+Route::any('pesquisa_lotes', [PesquisaController::class, 'searchLote']);

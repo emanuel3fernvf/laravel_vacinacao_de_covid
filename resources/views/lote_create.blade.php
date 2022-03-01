@@ -2,10 +2,16 @@
 
 @section('content')
 
+    <script>
+        
+        document.getElementById("loteLink").classList.toggle("btn-dark");
+        
+    </script>
+
     <div class="col-8 m-auto mt-3 shadow shadow-lg p-3">
         <h4>@if(isset($lote))Editar lote @else Cadastro de novo lote @endif</h4>
         @if(isset($lote))
-            <form class="row g-3 mt-1 mb-4 border align-items-center p-3" name="formLoteEdit" id="formLoteEdit" method="post" action="{{url("lotes/$lote->id")}}">
+            <form autocomplete="off" class="row g-3 mt-1 mb-4 border align-items-center p-3" name="formLoteEdit" id="formLoteEdit" method="post" action="{{url("lotes/$lote->id")}}">
                 @method('PUT')
                 @else
                     <form class="row g-3 mt-1 mb-4 border align-items-center p-3" name="formLote" id="formLote" method="post" action="{{url("lotes")}}">
@@ -29,7 +35,7 @@
             </div>
             <div class="col-md-6">
                 <label for="data_recebimento" class="form-label">Data de recebimento:</label>
-                <input class="form-control m-auto" type="datetime-local" name="data_recebimento" id="data_recebimento" placeholder="Digite a data do recebimento:" value="{{isset($lote->data_recebimento) ? str_replace('UTC','T',date('Y-m-dTh:m',strtotime($lote->data_recebimento))) : ''}}" required>
+                <input class="form-control m-auto" type="date" name="data_recebimento" id="data_recebimento" placeholder="Digite a data do recebimento:" value="{{isset($lote->data_recebimento) ? str_replace('UTC','T',date('Y-m-dTh:m',strtotime($lote->data_recebimento))) : ''}}" required>
             </div>
             <div class="col-md-12">
                 <input class="btn btn-primary m-auto" type="submit" value="@if(isset($lote)) Editar @else Cadastrar @endif">

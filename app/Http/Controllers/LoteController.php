@@ -14,8 +14,8 @@ class LoteController extends Controller
      */
     public function index()
     {
-        $lote = ModelLote::all()->sortByDesc('data_recebimento');
-        return view('lote_index',compact('lote'));
+        $lote = ModelLote::orderByDesc('data_recebimento')->paginate(10);
+        return view('lote_index', compact('lote'));
     }
 
     /**
@@ -36,14 +36,14 @@ class LoteController extends Controller
      */
     public function store(Request $request)
     {
-        $cadLote=ModelLote::create([
-            'lote'=>$request->lote,
-            'fabricante'=>$request->fabricante,
-            'validade'=>$request->validade,
-            'nfe'=>$request->nfe,
-            'data_recebimento'=>$request->data_recebimento,
+        $cadLote = ModelLote::create([
+            'lote' => $request->lote,
+            'fabricante' => $request->fabricante,
+            'validade' => $request->validade,
+            'nfe' => $request->nfe,
+            'data_recebimento' => $request->data_recebimento,
         ]);
-        if($cadLote){
+        if ($cadLote) {
             return redirect('lotes');
         }
     }
@@ -67,8 +67,8 @@ class LoteController extends Controller
      */
     public function edit($id)
     {
-        $lote=ModelLote::find($id);
-        return view('lote_create',compact('lote'));
+        $lote = ModelLote::find($id);
+        return view('lote_create', compact('lote'));
     }
 
     /**
@@ -80,12 +80,12 @@ class LoteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        ModelLote::where(['id'=>$id])->update([
-            'lote'=>$request->lote,
-            'fabricante'=>$request->fabricante,
-            'validade'=>$request->validade,
-            'nfe'=>$request->nfe,
-            'data_recebimento'=>$request->data_recebimento,
+        ModelLote::where(['id' => $id])->update([
+            'lote' => $request->lote,
+            'fabricante' => $request->fabricante,
+            'validade' => $request->validade,
+            'nfe' => $request->nfe,
+            'data_recebimento' => $request->data_recebimento,
         ]);
         return redirect('lotes');
     }
@@ -98,6 +98,7 @@ class LoteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $del = ModelLote::destroy($id);
+        return ($del) ? 'sim' : 'não';
     }
 }

@@ -2,6 +2,14 @@
 
 @section('content')
 
+
+    @if(isset($paciente))
+        <script>document.getElementById("pacienteLink").classList.toggle("btn-dark");</script>
+    @else
+        <script>document.getElementById("vacinaLink").classList.toggle("btn-dark");</script>
+    @endif
+
+
     <div class="col-10 m-auto mt-2">
         @csrf
             @if(isset($paciente))
@@ -44,7 +52,7 @@
             @endif
             
             
-            <table class="table shadow mb-5">
+            <table class="table table-sm table-bordered align-middle table-hover shadow mb-5">
                 @if(isset($paciente))
                     <div class="p-0">
                         <a href="{{url("pacientes/$paciente->id/vacinas/create")}}">
@@ -79,7 +87,7 @@
                         <th scope="row">{{$vacinas->dose}}</th>
                         <td>
                             {{date('d/m/Y',strtotime($vacinas->data_da_vacina))}}
-                            @if(date('d/m/Y',strtotime($vacinas->data_da_vacina))===date('d/m/Y'))
+                            @if(date('d/m/Y',strtotime($vacinas->created_at))===date('d/m/Y'))
                                 <span class="badge bg-success">Hoje</span>
                             @endif
                         </td>
@@ -118,5 +126,7 @@
 
                 </tbody>
             </table>
+
+            {{$vacina->links("pagination::bootstrap-5")}}
     </div>
 @endsection
