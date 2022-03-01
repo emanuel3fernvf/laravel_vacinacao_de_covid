@@ -35,7 +35,7 @@
             </div>
             <div class="col-md-6">
                 <label for="data_recebimento" class="form-label">Data de recebimento:</label>
-                <input class="form-control m-auto" type="date" name="data_recebimento" id="data_recebimento" placeholder="Digite a data do recebimento:" value="{{isset($lote->data_recebimento) ? str_replace('UTC','T',date('Y-m-dTh:m',strtotime($lote->data_recebimento))) : ''}}" required>
+                <input class="form-control m-auto" type="date" name="data_recebimento" id="data_recebimento" placeholder="Digite a data do recebimento:" value="{{isset($lote->data_recebimento) ? date('Y-m-d',strtotime($lote->data_recebimento)) : ''}}" required>
             </div>
             <div class="col-md-12">
                 <input class="btn btn-primary m-auto" type="submit" value="@if(isset($lote)) Editar @else Cadastrar @endif">
